@@ -122,6 +122,16 @@ header h1 {
     text-transform: capitalize;
 }
 
+.error-message {
+	  width: 30%;
+		padding: 20px;
+		margin: 40px 40px;
+		background: rgba(245, 245, 245, 0.9);
+    border-radius: 0.25em;
+    border: 1px solid rgba(50, 50, 50, 0.1);
+		display: none;
+}
+
 
 /* =====================================
    Modal

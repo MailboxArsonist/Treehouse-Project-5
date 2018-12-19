@@ -4,7 +4,8 @@
 const body = document.querySelector('body');
 const gallery = document.getElementById('gallery');
 let employeesArr =[];
-let cards = document.getElementsByClassName('card');;
+let cards = document.getElementsByClassName('card');
+let cardsOnDisplay = cards;
 let storeModalInfo = [];
 let modalOnDisplay;
 
@@ -38,6 +39,11 @@ modalDiv.innerHTML = exitButton;
 const modalInfo = document.createElement('div');
 modalInfo.className = 'modal-info-container';
 modalDiv.appendChild(modalInfo);
+//ERROR MESSAGE DIV
+const errorMessage = document.createElement('p');
+errorMessage.textContent = "Whoops.. Something went wrong, no students were found matching that name. Please try again."
+errorMessage.className = 'error-message';
+gallery.appendChild(errorMessage);
 
 
 
@@ -152,15 +158,22 @@ document.querySelector('.modal-btn-container').addEventListener('click', (e) => 
 //**--------------Functions for seaching employees--------------**//
 const searchEmployees = () => {
   const searchVal = document.getElementById('search-input').value.toLowerCase();
+  cardsOnDisplay = [];
   for(let i = 0; i < cards.length; i++){
     let employeeName = cards[i].lastElementChild.firstElementChild.textContent;
     if(employeeName.includes(searchVal)){
       cards[i].style.display = 'flex';
+      cardsOnDisplay.push(cards[i]);
     } else if (searchVal === "") {
       cards[i].style.display = 'flex';
     } else {
       cards[i].style.display = 'none';
     }
+  }
+  if(cardsOnDisplay.length === 0){
+    errorMessage.style.display = 'block';
+  } else {
+    errorMessage.style.display = 'none';
   }
 };
 
