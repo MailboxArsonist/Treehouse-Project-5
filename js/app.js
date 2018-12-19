@@ -84,8 +84,8 @@ const buildModal = (person) => {
       <p class="modal-text cap">${person.location.city}</p>
       <hr>
       <p class="modal-text">${person.phone}</p>
-      <p class="modal-text">${person.location.street}, ${person.location.city}, ${person.location.state} ${person.location.postcode}</p>
-      <p class="modal-text">Birthday: ${person.dob.date}</p>
+      <p class="modal-text">${person.location.street}, ${person.location.city.charAt(0).toUpperCase()}${person.location.city.slice(1)}, ${person.location.state.charAt(0).toUpperCase()}${person.location.state.slice(1)}, ${person.location.postcode}</p>
+      <p class="modal-text">Birthday: ${person.dob.date.slice(0,10)}</p>
   `;
   storeModalInfo.push(html);
 }
@@ -123,34 +123,47 @@ document.getElementById('modal-close-btn').addEventListener('click', () => {
   modalOnDisplay = null;
 });
 
-document.querySelector('.modal-btn-container').addEventListener('click', (e) => {
-  if(e.target.textContent === 'Next'){
+const showNextEmployee = (event) => {
+  if(event === 'Next' || event === 39){
     modalOnDisplay++;
     if(modalOnDisplay === 12){
       modalOnDisplay = 0;
     }
     modalInfo.innerHTML = storeModalInfo[modalOnDisplay];
-    console.log(modalOnDisplay);
-  } else if (e.target.textContent === 'Prev') {
+  } else if (event === 'Prev' || event === 37) {
     modalOnDisplay--;
     if(modalOnDisplay === -1){
       modalOnDisplay = 11;
     }
     modalInfo.innerHTML = storeModalInfo[modalOnDisplay];
-    console.log(modalOnDisplay);
+  }
+};
+
+document.addEventListener('keyup', (e) => {
+  if(modalContainer.style.display === 'block'){
+    showNextEmployee(e.keyCode);
   }
 });
 
-//**--------------EVENT LISTENERS ON SEARCHBAR--------------**//
+document.querySelector('.modal-btn-container').addEventListener('click', (e) => {
+  showNextEmployee(e.target.textContent);
+});
 
-document.querySelector('form').addEventListener('keyup', () => {
+//**--------------Functions for seaching employees--------------**//
+const searchEmployees = () => {
   const searchVal = document.getElementById('search-input').value.toLowerCase();
   for(let i = 0; i < cards.length; i++){
     let employeeName = cards[i].lastElementChild.firstElementChild.textContent;
     if(employeeName.includes(searchVal)){
       cards[i].style.display = 'flex';
+    } else if (searchVal === "") {
+      cards[i].style.display = 'flex';
     } else {
       cards[i].style.display = 'none';
     }
   }
-});
+};
+
+//**--------------EVENT LISTENERS ON SEARCHBAR--------------**//
+document.querySelector('form').addEventListener('keyup', searchEmployees);
+document.querySelector('#serach-submit').addEventListener('click', searchEmployees);
