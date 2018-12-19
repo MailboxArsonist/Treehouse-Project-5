@@ -3,12 +3,12 @@
 //Define Global Variables.
 const body = document.querySelector('body');
 const gallery = document.getElementById('gallery');
-let employeesArr =[];
-let cards = document.getElementsByClassName('card');
-let cardsOnDisplay = cards;
-let storeModalInfo = [];
-let modalsToDisplay = storeModalInfo;
-let modalCounter;
+let employeesArr =[]; //Will hold an array of employee objects
+let cards = document.getElementsByClassName('card'); //get card divs on page
+let cardsOnDisplay = cards; //Will keep track of the cards on page
+let storeModalInfo = []; //Contains an array of employee html, will be accessed to display modals
+let modalsToDisplay = storeModalInfo; //Keeps track of the modals to display
+let modalCounter; //A counter to keep track of index to access on modalsToDisplay
 
 //**--------------Create and Append HTML--------------**//
 //SEARCH BAR
@@ -62,7 +62,7 @@ fetch('https://randomuser.me/api/?results=12&nat=gb')
 
 
 
-//**--------------Functions to build employee divs--------------**//
+//**--------------FUNCTIONS TO BUILD EMPLOYEE HTML--------------**//
 //function to create a card div
 const cardCreator = (person) => {
   const cardDiv = document.createElement('div');
@@ -78,11 +78,11 @@ const cardCreator = (person) => {
       </div>
   `;
   cardDiv.innerHTML = html;
-  cardDiv.addEventListener('click', (e) => showModal(e))
-  gallery.appendChild(cardDiv)
-}
+  cardDiv.addEventListener('click', (e) => checkClick(e)); //Add event listener to each div
+  gallery.appendChild(cardDiv);
+};
 
-// function to build modal
+// function to build modal div
 const buildModal = (person) => {
   const html = `
       <img class="modal-img" src="${person.picture.large}">
@@ -95,14 +95,13 @@ const buildModal = (person) => {
       <p class="modal-text">Birthday: ${person.dob.date.slice(0,10)}</p>
   `;
   storeModalInfo.push(html);
-}
+};
 
 
 
 //**-------------- Functions called when cards are clicked--------------**//
-
-const showModal = (e) => {
-
+//checkClick is called when div cards are clicked Will call setModalHtml and pass in the div.card as argument
+const checkClick = (e) => {
   if(e.target.className === 'card'){
     setModalHtml(e.target);
   } else if (e.target.parentNode.className === 'card') {
@@ -110,9 +109,8 @@ const showModal = (e) => {
   } else {
     setModalHtml(e.target.parentNode.parentNode)
   }
-
 };
-
+//Will loop through cardsOnDisplay to check if match, then set html for modal and set to display
 const setModalHtml = (div) => {
   for(let i = 0; i < cardsOnDisplay.length; i++){
     if(cardsOnDisplay[i] === div){
@@ -121,18 +119,15 @@ const setModalHtml = (div) => {
       modalContainer.style.display = 'block';
     }
   }
-}
+};
 
-//**--------------EVENT LISTENERS ON MODAL--------------**//
-document.getElementById('modal-close-btn').addEventListener('click', () => {
-  modalInfo.innerHTML = '';
-  modalContainer.style.display = 'none';
-  modalOnDisplay = null;
-});
-
+//**--------------FUNCTION TO DISPLAY NEXT/PREV EMPLOYEE--------------**//
+//param is either textContent of button or keycode of arrow press
+//Will set html to the modalsToDisplay[modalCounter]
 const showNextEmployee = (event) => {
   if(event === 'Next' || event === 39){
     modalCounter++;
+    //checks for end of array and loop back to index 0
     if(modalCounter === modalsToDisplay.length){
       modalCounter = 0;
     }
@@ -145,13 +140,20 @@ const showNextEmployee = (event) => {
     modalInfo.innerHTML = modalsToDisplay[modalCounter];
   }
 };
-
+//**--------------EVENT LISTENERS ON MODAL--------------**//
+//Will close display and remove html
+document.getElementById('modal-close-btn').addEventListener('click', () => {
+  modalInfo.innerHTML = '';
+  modalContainer.style.display = 'none';
+  modalOnDisplay = null;
+});
+//checks for keyup when the modalContainer is displayed
 document.addEventListener('keyup', (e) => {
   if(modalContainer.style.display === 'block'){
     showNextEmployee(e.keyCode);
   }
 });
-
+//Checks for clicks on next/prev buttons
 document.querySelector('.modal-btn-container').addEventListener('click', (e) => {
   showNextEmployee(e.target.textContent);
 });
@@ -159,13 +161,17 @@ document.querySelector('.modal-btn-container').addEventListener('click', (e) => 
 //**--------------Functions for seaching employees--------------**//
 const searchEmployees = () => {
   const searchVal = document.getElementById('search-input').value.toLowerCase();
+  //reset display arrays
   cardsOnDisplay = [];
   modalsToDisplay = [];
   for(let i = 0; i < cards.length; i++){
+    //Will set emloyeeName to h3 textContent, which is the employee name, compare to searchval
     let employeeName = cards[i].lastElementChild.firstElementChild.textContent;
     if(employeeName.includes(searchVal)){
       cards[i].style.display = 'flex';
+      //push matched cards into cards to display array
       cardsOnDisplay.push(cards[i]);
+      //push matched into modalsToDisplay array
       modalsToDisplay.push(storeModalInfo[i]);
     } else if (searchVal === "") {
       cards[i].style.display = 'flex';
@@ -173,6 +179,7 @@ const searchEmployees = () => {
       cards[i].style.display = 'none';
     }
   }
+  //if cardsOnDisplay === 0 = no matched results, set error message to display
   if(cardsOnDisplay.length === 0){
     errorMessage.style.display = 'block';
   } else {
