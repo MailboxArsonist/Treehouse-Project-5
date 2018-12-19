@@ -4,11 +4,18 @@
 const body = document.querySelector('body');
 const gallery = document.getElementById('gallery');
 let employeesArr =[];
-let cards = [];
+let cards = document.getElementsByClassName('card');;
 let storeModalInfo = [];
 let modalOnDisplay;
 
 //**--------------Create and Append HTML--------------**//
+//SEARCH BAR
+const searchContainer = document.querySelector('.search-container');
+const form = `<form action="#" method="get">
+                <input type="search" id="search-input" class="search-input" placeholder="Search...">
+                <input type="submit" value="&#x1F50D;" id="serach-submit" class="search-submit">
+              </form>`;
+searchContainer.innerHTML = form;
 //MODAL CONTAINER
 const modalContainer = document.createElement('div');
 modalContainer.className = 'modal-container';
@@ -42,7 +49,6 @@ fetch('https://randomuser.me/api/?results=12&nat=gb')
     employeesArr.forEach(personObj => {
       cardCreator(personObj);
       buildModal(personObj);
-
     });
   })
 
@@ -101,7 +107,6 @@ const showModal = (e) => {
 };
 
 const setModalHtml = (div) => {
-  let cards = document.getElementsByClassName('card');
   for(let i = 0; i < cards.length; i++){
     if(cards[i] === div){
       modalInfo.innerHTML = storeModalInfo[i];
@@ -117,14 +122,35 @@ document.getElementById('modal-close-btn').addEventListener('click', () => {
   modalContainer.style.display = 'none';
   modalOnDisplay = null;
 });
+
 document.querySelector('.modal-btn-container').addEventListener('click', (e) => {
   if(e.target.textContent === 'Next'){
     modalOnDisplay++;
+    if(modalOnDisplay === 12){
+      modalOnDisplay = 0;
+    }
     modalInfo.innerHTML = storeModalInfo[modalOnDisplay];
-    console.log('next');
+    console.log(modalOnDisplay);
   } else if (e.target.textContent === 'Prev') {
     modalOnDisplay--;
+    if(modalOnDisplay === -1){
+      modalOnDisplay = 11;
+    }
     modalInfo.innerHTML = storeModalInfo[modalOnDisplay];
-    console.log('Prev');
+    console.log(modalOnDisplay);
+  }
+});
+
+//**--------------EVENT LISTENERS ON SEARCHBAR--------------**//
+
+document.querySelector('form').addEventListener('keyup', () => {
+  const searchVal = document.getElementById('search-input').value.toLowerCase();
+  for(let i = 0; i < cards.length; i++){
+    let employeeName = cards[i].lastElementChild.firstElementChild.textContent;
+    if(employeeName.includes(searchVal)){
+      cards[i].style.display = 'flex';
+    } else {
+      cards[i].style.display = 'none';
+    }
   }
 });
