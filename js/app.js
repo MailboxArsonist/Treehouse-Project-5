@@ -7,7 +7,8 @@ let employeesArr =[];
 let cards = document.getElementsByClassName('card');
 let cardsOnDisplay = cards;
 let storeModalInfo = [];
-let modalOnDisplay;
+let modalsToDisplay = storeModalInfo;
+let modalCounter;
 
 //**--------------Create and Append HTML--------------**//
 //SEARCH BAR
@@ -113,10 +114,10 @@ const showModal = (e) => {
 };
 
 const setModalHtml = (div) => {
-  for(let i = 0; i < cards.length; i++){
-    if(cards[i] === div){
-      modalInfo.innerHTML = storeModalInfo[i];
-      modalOnDisplay = i;
+  for(let i = 0; i < cardsOnDisplay.length; i++){
+    if(cardsOnDisplay[i] === div){
+      modalInfo.innerHTML = modalsToDisplay[i];
+      modalCounter = i;
       modalContainer.style.display = 'block';
     }
   }
@@ -131,17 +132,17 @@ document.getElementById('modal-close-btn').addEventListener('click', () => {
 
 const showNextEmployee = (event) => {
   if(event === 'Next' || event === 39){
-    modalOnDisplay++;
-    if(modalOnDisplay === 12){
-      modalOnDisplay = 0;
+    modalCounter++;
+    if(modalCounter === modalsToDisplay.length){
+      modalCounter = 0;
     }
-    modalInfo.innerHTML = storeModalInfo[modalOnDisplay];
+    modalInfo.innerHTML = modalsToDisplay[modalCounter];
   } else if (event === 'Prev' || event === 37) {
-    modalOnDisplay--;
-    if(modalOnDisplay === -1){
-      modalOnDisplay = 11;
+    modalCounter--;
+    if(modalCounter === -1){
+      modalCounter = modalsToDisplay.length - 1;
     }
-    modalInfo.innerHTML = storeModalInfo[modalOnDisplay];
+    modalInfo.innerHTML = modalsToDisplay[modalCounter];
   }
 };
 
@@ -159,11 +160,13 @@ document.querySelector('.modal-btn-container').addEventListener('click', (e) => 
 const searchEmployees = () => {
   const searchVal = document.getElementById('search-input').value.toLowerCase();
   cardsOnDisplay = [];
+  modalsToDisplay = [];
   for(let i = 0; i < cards.length; i++){
     let employeeName = cards[i].lastElementChild.firstElementChild.textContent;
     if(employeeName.includes(searchVal)){
       cards[i].style.display = 'flex';
       cardsOnDisplay.push(cards[i]);
+      modalsToDisplay.push(storeModalInfo[i]);
     } else if (searchVal === "") {
       cards[i].style.display = 'flex';
     } else {
