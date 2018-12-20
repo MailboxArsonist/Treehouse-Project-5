@@ -49,7 +49,7 @@ gallery.appendChild(errorMessage);
 
 
 //Call fetch to the randomuser api for 12 random students.
-fetch('https://randomuser.me/api/?results=12&nat=gb')
+fetch('https://randomuser.me/api/?results=12&nat=us')
   .then(response => response.json())
   .then(result => {
     employeesArr = result.results;
@@ -84,6 +84,7 @@ const cardCreator = (person) => {
 
 // function to build modal div
 const buildModal = (person) => {
+  let bday = `${person.dob.date.slice(8,10)}/${person.dob.date.slice(5,7)}/${person.dob.date.slice(0,4)}`;
   const html = `
       <img class="modal-img" src="${person.picture.large}">
       <h3 id="name" class="modal-name cap">${person.name.first} ${person.name.last}</h3>
@@ -92,7 +93,7 @@ const buildModal = (person) => {
       <hr>
       <p class="modal-text">${person.phone}</p>
       <p class="modal-text">${person.location.street}, ${person.location.city.charAt(0).toUpperCase()}${person.location.city.slice(1)}, ${person.location.state.charAt(0).toUpperCase()}${person.location.state.slice(1)}, ${person.location.postcode}</p>
-      <p class="modal-text">Birthday: ${person.dob.date.slice(0,10)}</p>
+      <p class="modal-text">Birthday: ${bday}</p>
   `;
   storeModalInfo.push(html);
 };
