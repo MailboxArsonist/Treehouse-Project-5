@@ -1,6 +1,6 @@
 # Treehouse-Project-5
 
-Application for a fictisous company to display a directory of employees.
+Application for a fictitious company to display a directory of employees.
 
 1 Application will make a GET request to randomuser.me for 12 random employee's
 1.1 Response will be sent in JSON and converted to JS
